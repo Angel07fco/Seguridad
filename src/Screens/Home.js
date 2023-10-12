@@ -45,12 +45,6 @@ function Home() {
       return;
     }
 
-    if (accion === 'descifrar' && resultado === '') {
-      // Alerta si se intenta descifrar sin un texto cifrado.
-      setAlerta('No hay texto cifrado para descifrar. Ingresa un texto cifrado válido.');
-      return;
-    }
-
     if (accion === 'cifrar') {
       const tcifrado = cifrar(texto);
       if (tcifrado) {
