@@ -60,7 +60,6 @@ function Home() {
       if (tdescifrado !== null) {
         setResultado(tdescifrado);
         setBordeRojo(false); // Restablecer el borde a su color original.
-        setAlerta('El texto no es válido para descifrar.');
       } else {
         setAlerta('El texto no es válido para descifrar.');
         setResultado(''); // Borrar cualquier resultado anterior.
