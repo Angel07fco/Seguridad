@@ -1,76 +1,125 @@
 import React, { useState } from 'react';
 import CryptoJS from 'crypto-js';
+import '../App.css'; // Asegúrate de tener un archivo CSS para los estilos.
 
 function Home() {
   const [texto, setTexto] = useState('');
-  const [accion, setAccion] = useState('cifrar');
+  const [accion, setAccion] = useState('cifrar'); // Establece "cifrar" como valor predeterminado
   const [resultado, setResultado] = useState('');
+  const [bordeRojo, setBordeRojo] = useState(false);
+  const [alerta, setAlerta] = useState('');
 
   const cifrar = (texto) => {
-    var textoCifrado = CryptoJS.AES.encrypt(texto, '@angelscript').toString();
+    const textoCifrado = CryptoJS.AES.encrypt(texto, '@angelscript').toString();
     return textoCifrado;
-  }
+  };
 
   const descifrar = (texto) => {
-    var bytes = CryptoJS.AES.decrypt(texto, '@angelscript');
-    var textoDescifrado = bytes.toString(CryptoJS.enc.Utf8);
-    return textoDescifrado;
-  }
+    try {
+      const bytes = CryptoJS.AES.decrypt(texto, '@angelscript');
+      const textoDescifrado = bytes.toString(CryptoJS.enc.Utf8);
+      return textoDescifrado;
+    } catch (error) {
+      return null;
+    }
+  };
 
   const handleTextoChange = (e) => {
     setTexto(e.target.value);
+    setBordeRojo(false); // Restablecer el borde a su color original cuando se cambia el texto.
+    setAlerta(''); // Borrar cualquier alerta existente.
   };
 
-  const handleAccionChange = (e) => {
-    setAccion(e.target.value);
+  const handleAccionChange = (nuevaAccion) => {
+    if (accion !== nuevaAccion) {
+      setAccion(nuevaAccion);
+      setBordeRojo(false); // Restablecer el borde a su color original al cambiar la acción.
+      setAlerta(''); // Borrar cualquier alerta existente al cambiar la acción.
+    }
   };
 
   const handleObtenerResultado = () => {
-    // Ejemplo de implementación:
+    if (texto === '') {
+      setBordeRojo(true); // Establecer el borde en rojo si no hay texto.
+      setAlerta('');
+      return;
+    }
+
+    if (accion === 'cifrar' && resultado !== '') {
+      // Alerta si ya se cifró el texto.
+      setAlerta('Este texto ya fue cifrado. Puedes descifrarlo o ingresar un texto nuevo.');
+      return;
+    }
+
+    if (accion === 'descifrar' && resultado === '') {
+      // Alerta si se intenta descifrar sin un texto cifrado.
+      setAlerta('No hay texto cifrado para descifrar. Ingresa un texto cifrado válido.');
+      return;
+    }
+
     if (accion === 'cifrar') {
-      var tcifrado = cifrar(texto);
-      setResultado(tcifrado)
+      const tcifrado = cifrar(texto);
+      if (tcifrado) {
+        setResultado(tcifrado);
+        setBordeRojo(false); // Restablecer el borde a su color original.
+        setAlerta('');
+      } else {
+        setAlerta('El texto no es válido para cifrar.');
+        setResultado(''); // Borrar cualquier resultado anterior.
+      }
     } else if (accion === 'descifrar') {
-      var tdescifrado = descifrar(texto);
-      setResultado(tdescifrado)
+      const tdescifrado = descifrar(texto);
+      if (tdescifrado !== null) {
+        setResultado(tdescifrado);
+        setBordeRojo(false); // Restablecer el borde a su color original.
+        setAlerta('El texto no es válido para descifrar.');
+      } else {
+        setAlerta('El texto no es válido para descifrar.');
+        setResultado(''); // Borrar cualquier resultado anterior.
+      }
     }
   };
 
   return (
-    <div className="App">
-      <h1>Cifrado y Descifrado</h1>
-      <div>
-        <label htmlFor="texto">Texto:</label>
-        <input
-          type="text"
-          id="texto"
-          value={texto}
-          onChange={handleTextoChange}
-        />
+    <div className="app-container">
+      <h1 className='title'>Cifrado y Descifrado simétrico</h1>
+      <h2 className='sub-title'>Biblioteca: crypto-js</h2>
+      <h2 className='sub-title'>Método: AES (Advanced Encryption Standard)</h2>
+      <div className="form-container">
+        <div className='input-texto'>
+          <label className='texto'>Texto:</label>
+          <input
+            className={`inputT ${bordeRojo ? 'borde-rojo' : ''}`}
+            type="text"
+            placeholder='Ingrese un texto'
+            id="texto"
+            value={texto}
+            onChange={handleTextoChange}
+          />
+        </div>
+        <div className="button-group">
+          <div
+            className={`action-button ${accion === 'cifrar' ? 'active' : ''}`}
+            onClick={() => handleAccionChange('cifrar')}
+          >
+            Cifrar
+          </div>
+          <div
+            className={`action-button ${accion === 'descifrar' ? 'active' : ''}`}
+            onClick={() => handleAccionChange('descifrar')}
+          >
+            Descifrar
+          </div>
+        </div>
+        <div className="result-button">
+          <div onClick={handleObtenerResultado}>Obtener</div>
+        </div>
+        <div className="alerta">
+          {alerta && <p>{alerta}</p>}
+        </div>
       </div>
-      <div>
-        <input
-          type="radio"
-          id="cifrar"
-          name="accion"
-          value="cifrar"
-          checked={accion === 'cifrar'}
-          onChange={handleAccionChange}
-        />
-        <label htmlFor="cifrar">Cifrar</label>
-        <input
-          type="radio"
-          id="descifrar"
-          name="accion"
-          value="descifrar"
-          checked={accion === 'descifrar'}
-          onChange={handleAccionChange}
-        />
-        <label htmlFor="descifrar">Descifrar</label>
-      </div>
-      <button onClick={handleObtenerResultado}>Obtener</button>
-      <div>
-        <label htmlFor="resultado">Resultado:</label>
+      <div className="resultado-container">
+        <label>Resultado:</label>
         <textarea
           id="resultado"
           rows="4"
