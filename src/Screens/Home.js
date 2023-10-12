@@ -45,12 +45,6 @@ function Home() {
       return;
     }
 
-    if (accion === 'cifrar' && resultado !== '') {
-      // Alerta si ya se cifró el texto.
-      setAlerta('Este texto ya fue cifrado. Puedes descifrarlo o ingresar un texto nuevo.');
-      return;
-    }
-
     if (accion === 'descifrar' && resultado === '') {
       // Alerta si se intenta descifrar sin un texto cifrado.
       setAlerta('No hay texto cifrado para descifrar. Ingresa un texto cifrado válido.');
