@@ -1,12 +1,10 @@
 import './App.css';
-import Navbar from './Componentes/Narvar';
-import About from './Screens/About';
+import Home from './Screens/Home';
 
 function App() {
   return (
     <div>
-      <Navbar />
-      <About />
+      <Home />
     </div>
   );
 }
